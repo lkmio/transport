@@ -68,6 +68,12 @@ func (t *TCPServer) doAccept(listener *net.TCPListener) {
 }
 
 func (t *TCPServer) Close() {
+	// 先退出Accept, 再关闭连接.
+	if t.cancel != nil {
+		t.cancel()
+		t.cancel = nil
+	}
+
 	for _, listener := range t.listeners {
 		_ = listener.Close()
 	}
